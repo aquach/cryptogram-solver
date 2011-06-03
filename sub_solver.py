@@ -94,9 +94,9 @@ class SubSolver(object):
         """Solves the cipher passed to the solver.
 
         This function invokes the recursive solver multiple times, starting
-        with a very strict threshold on unknown words (which could be pronouns
-        or words not in the dictionary). It then expands this out to a final
-        threshold, after which it considers the cipher unsolvable.
+        with a very strict threshold on unknown words (which could be proper
+        nouns or words not in the dictionary). It then expands this out to a
+        final threshold, after which it considers the cipher unsolvable.
         """
 
         words = re.sub(r'[^\w ]+', '', self.ciphertext).split()
@@ -154,6 +154,9 @@ class SubSolver(object):
             for i in xrange(0, len(candidate)):
                 cipherChar = cipherWord[i]
                 plaintextChar = candidate[i]
+                # This translation is bad if it tries to translate a ciphertext
+                # character we haven't seen to a plaintext character we already
+                # have a translation for.
                 if (cipherChar not in currentTranslation and
                     plaintextChar in translatedPlaintextChars):
                     badTranslation = True
@@ -169,6 +172,8 @@ class SubSolver(object):
             if result:
                 return result
 
+        # Try not using the candidates and skipping this word, because it
+        # might not be in the corpus if it's a proper noun.
         skipWordSolution = self._recursiveSolve(remainingWords[1:],
                                                 currentTranslation,
                                                 unknownWordCount + 1,
