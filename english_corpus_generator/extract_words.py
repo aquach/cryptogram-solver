@@ -1,9 +1,5 @@
-#!/usr/bin/python2.7
-
 import glob
-import os
 import re
-import sys
 
 files = glob.glob('pages/*')
 
